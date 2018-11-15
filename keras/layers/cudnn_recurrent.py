@@ -41,7 +41,7 @@ class _CuDNNRNN(RNN):
         self.return_state = return_state
         self.go_backwards = go_backwards
         self.stateful = stateful
-        self.supports_masking = False
+        self.supports_masking = True
         self.input_spec = [InputSpec(ndim=3)]
         if hasattr(self.cell.state_size, '__len__'):
             state_size = self.cell.state_size
@@ -60,10 +60,9 @@ class _CuDNNRNN(RNN):
         return tf.concat(weights + biases, 0)
 
     def call(self, inputs, mask=None, training=None, initial_state=None):
+        
         if isinstance(mask, list):
             mask = mask[0]
-        if mask is not None:
-            raise ValueError('Masking is not supported for CuDNN RNNs.')
 
         # input shape: `(samples, time (padded with zeros), input_dim)`
         # note that the .build() method of subclasses MUST define
